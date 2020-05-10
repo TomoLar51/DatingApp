@@ -11,6 +11,8 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { FileUploadModule } from 'ng2-file-upload';
 
+
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { AuthService } from './_services/auth.service';
@@ -50,7 +52,8 @@ export function tokenGetter() {
       MemberDetailComponent,
       MemberEditComponent,
       MessagesComponent,
-      PhotoEditorComponent
+      PhotoEditorComponent,
+      TimeAgoPipe
    ],
    imports: [
       BrowserModule,
