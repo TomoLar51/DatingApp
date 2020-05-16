@@ -57,6 +57,4 @@ export class MemberListComponent implements OnInit {
             this.alertify.error(error);
         });
     }
-    
-
 }
