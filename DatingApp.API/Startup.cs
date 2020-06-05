@@ -32,10 +32,44 @@ namespace DatingApp.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            //services.AddDbContext<DataContext>(x => 
+            //    x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<DataContext>(x => {
+                x.UseLazyLoadingProxies();
+                x.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+            });
+                
+
+            //services.AddDbContext<DataContext>(x => 
+            //    x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+                ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            // MySql Server.
+            services.AddDbContext<DataContext>(x => {
+                x.UseLazyLoadingProxies();
+                x.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+            });
+                
+
+            // SqlServer.
+            //services.AddDbContext<DataContext>(x => 
+            //    x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            ConfigureServices(services);
+        }
+
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddControllers().AddNewtonsoftJson(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
@@ -90,9 +124,17 @@ namespace DatingApp.API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Accept index.html.
+            app.UseDefaultFiles();
+
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // Map all fallbacks to our Fallback controller Index() method.
+                endpoints.MapFallbackToController("index", "Fallback");
             });
         }
     }
